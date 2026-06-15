@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Local AI Coding Stack — RTX 4050 Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1318;
+    --bg-2:#111a21;
+    --surface:#16212b;
+    --surface-2:#1c2a36;
+    --line:#26384a;
+    --line-soft:#1f2e3b;
+    --text:#e7e4dc;
+    --muted:#8b9aab;
+    --muted-2:#6a7a8c;
+    --copper:#e0883f;
+    --copper-soft:#f0b072;
+    --cyan:#54d6c4;
+    --cyan-dim:#2f7a72;
+    --danger:#e57373;
+    --radius:14px;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+    --display:'Space Grotesk',system-ui,sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(900px 500px at 85% -10%, rgba(224,136,63,.10), transparent 60%),
+      radial-gradient(800px 500px at -5% 5%, rgba(84,214,196,.08), transparent 55%),
+      var(--bg);
+    color:var(--text);font-family:var(--body);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--cyan)}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px}
+
+  /* header */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:rgba(13,19,24,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .bar{display:flex;align-items:center;gap:16px;padding:14px 0}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:700;font-size:1.02rem;letter-spacing:.2px}
+  .brand .dot{width:11px;height:11px;border-radius:3px;background:var(--copper);box-shadow:0 0 0 3px rgba(224,136,63,.18)}
+  .brand small{display:block;font-family:var(--body);font-weight:400;font-size:.7rem;color:var(--muted-2);letter-spacing:.4px;text-transform:uppercase}
+  .bar .spacer{flex:1}
+  .iconbtn{
+    display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+    background:var(--surface);border:1px solid var(--line);color:var(--text);
+    font-family:var(--body);font-size:.82rem;font-weight:500;
+    padding:8px 13px;border-radius:9px;transition:border-color .15s,background .15s,transform .05s;
+  }
+  .iconbtn:hover{border-color:var(--copper);background:var(--surface-2)}
+  .iconbtn:active{transform:translateY(1px)}
+  .iconbtn svg{width:15px;height:15px;flex:none}
+  .iconbtn.cfg{border-color:var(--cyan-dim)}
+  .iconbtn.cfg.set .led{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+  .led{width:7px;height:7px;border-radius:50%;background:var(--muted-2)}
+
+  /* hero */
+  .hero{padding:46px 0 22px}
+  .eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--copper)}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.08;margin:.5rem 0 .4rem;letter-spacing:-.5px}
+  h1 .glow{color:var(--cyan)}
+  .lede{color:var(--muted);max-width:62ch;font-size:1.02rem}
+
+  /* vram meter — signature element */
+  .vram{margin:30px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 20px 18px}
+  .vram-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .vram-head h3{font-family:var(--display);font-weight:600;font-size:.95rem;margin:0;letter-spacing:.3px}
+  .vram-head .cap{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+  .vram-cap{color:var(--copper-soft)}
+  .track{position:relative;height:42px;margin:15px 0 10px;background:repeating-linear-gradient(90deg,var(--bg-2) 0 1px,transparent 1px calc(100%/6));border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .fill{display:flex;height:100%;width:100%;transition:opacity .2s}
+  .seg{height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.68rem;color:#0d1318;font-weight:600;white-space:nowrap;overflow:hidden;border-right:1px solid rgba(13,19,24,.35);transition:flex-basis .45s cubic-bezier(.4,0,.2,1)}
+  .seg.weights{background:linear-gradient(180deg,var(--copper-soft),var(--copper))}
+  .seg.kv{background:linear-gradient(180deg,#79c7bd,var(--cyan))}
+  .seg.free{background:transparent;color:var(--muted-2);border-right:none}
+  .ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.66rem;color:var(--muted-2)}
+  .scenarios{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .chip-btn{cursor:pointer;background:var(--bg-2);border:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:.74rem;padding:6px 11px;border-radius:20px;transition:.15s}
+  .chip-btn:hover{color:var(--text);border-color:var(--cyan-dim)}
+  .chip-btn[aria-pressed="true"]{background:rgba(84,214,196,.12);border-color:var(--cyan);color:var(--cyan)}
+  .vram-note{margin-top:12px;font-size:.84rem;color:var(--muted);min-height:1.4em}
+
+  /* steps */
+  section.steps{padding:26px 0 8px}
+  .sec-title{font-family:var(--display);font-weight:600;font-size:1.4rem;margin:18px 0 6px;letter-spacing:-.2px}
+  .sec-sub{color:var(--muted);margin:0 0 22px;font-size:.95rem}
+  .step{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 20px 64px;margin-bottom:16px}
+  .step .num{position:absolute;left:18px;top:20px;width:32px;height:32px;border-radius:9px;background:var(--bg-2);border:1px solid var(--copper);color:var(--copper-soft);font-family:var(--mono);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:.92rem}
+  .step h4{font-family:var(--display);font-weight:600;font-size:1.08rem;margin:.1rem 0 .5rem}
+  .step p{margin:.4rem 0;color:var(--muted);font-size:.93rem}
+  .step p strong{color:var(--text);font-weight:600}
+  .step .opt{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--cyan-dim);border-radius:5px;padding:1px 7px;margin-left:8px;vertical-align:middle}
+  .cmd{position:relative;margin:11px 0;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:9px;padding:12px 46px 12px 14px;font-family:var(--mono);font-size:.82rem;color:#cfe6e2;overflow-x:auto;white-space:pre}
+  .cmd .copy{position:absolute;top:8px;right:8px;cursor:pointer;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;transition:.15s}
+  .cmd .copy:hover{color:var(--cyan);border-color:var(--cyan-dim)}
+  .cmd .copy svg{width:14px;height:14px}
+  .cmd.copied .copy{color:var(--cyan);border-color:var(--cyan)}
+  .hint{font-size:.82rem;color:var(--muted-2);border-left:2px solid var(--copper);padding:2px 0 2px 11px;margin:10px 0 2px}
+  .hint b{color:var(--copper-soft);font-weight:600}
+
+  /* gemini chat */
+  section.ask{padding:30px 0 70px}
+  .chat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .chat-head{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--line-soft);background:linear-gradient(180deg,rgba(84,214,196,.05),transparent)}
+  .chat-head .g{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .chat-head h4{font-family:var(--display);font-weight:600;margin:0;font-size:1rem;flex:1}
+  .chat-head .st{font-family:var(--mono);font-size:.72rem;color:var(--muted-2)}
+  .log{padding:18px;height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+  .msg{max-width:84%;font-size:.9rem}
+  .msg .who{font-family:var(--mono);font-size:.66rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:4px}
+  .msg.me{align-self:flex-end;text-align:right}
+  .msg.me .who{color:var(--copper)}
+  .msg.me .bubble{background:rgba(224,136,63,.12);border:1px solid rgba(224,136,63,.3)}
+  .msg .bubble{display:inline-block;text-align:left;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:11px;padding:10px 13px;color:var(--text);overflow-wrap:anywhere}
+  .msg .bubble p{margin:.3rem 0}
+  .msg .bubble pre{background:#0a1014;border:1px solid var(--line-soft);border-radius:7px;padding:10px;overflow-x:auto;font-family:var(--mono);font-size:.8rem;margin:.5rem 0}
+  .msg .bubble code{font-family:var(--mono);font-size:.84em;background:rgba(255,255,255,.06);padding:.05em .35em;border-radius:4px}
+  .msg .bubble pre code{background:none;padding:0}
+  .empty{color:var(--muted-2);font-size:.9rem;align-self:center;margin:auto;text-align:center;max-width:42ch}
+  .empty span{display:block;font-family:var(--mono);font-size:.72rem;color:var(--cyan-dim);margin-top:8px}
+  .typing{font-family:var(--mono);color:var(--cyan);font-size:.85rem}
+  .typing i{animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+  .compose{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line-soft);align-items:flex-end}
+  .compose textarea{flex:1;resize:none;background:var(--bg-2);border:1px solid var(--line);color:var(--text);font-family:var(--body);font-size:.9rem;border-radius:9px;padding:10px 12px;line-height:1.4;max-height:120px}
+  .compose textarea:focus{outline:none;border-color:var(--cyan)}
+  .send{cursor:pointer;background:var(--cyan);color:#08110f;border:none;font-family:var(--display);font-weight:600;font-size:.86rem;border-radius:9px;padding:10px 18px;transition:.15s;height:42px}
+  .send:hover{background:var(--copper-soft);color:#1a0e02}
+  .send:disabled{opacity:.4;cursor:not-allowed}
+  .nokey{font-size:.82rem;color:var(--copper-soft);padding:0 14px 14px}
+  .nokey button{background:none;border:none;color:var(--cyan);cursor:pointer;font:inherit;text-decoration:underline;padding:0}
+
+  /* modal */
+  .scrim{position:fixed;inset:0;background:rgba(5,9,12,.72);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+  .scrim.open{display:flex}
+  .modal{background:var(--surface);border:1px solid var(--line);border-radius:16px;max-width:460px;width:100%;padding:26px;animation:pop .18s ease}
+  @keyframes pop{from{transform:translateY(8px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+  .modal h3{font-family:var(--display);font-weight:700;margin:0 0 4px;font-size:1.2rem}
+  .modal .sub{color:var(--muted);font-size:.88rem;margin:0 0 18px}
+  .modal label{display:block;font-family:var(--mono);font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+  .modal input{width:100%;background:var(--bg-2);border:1px solid var(--line);color:var(--text);font-family:var(--mono);font-size:.85rem;border-radius:8px;padding:10px 12px}
+  .modal input:focus{outline:none;border-color:var(--cyan)}
+  .modal .row{display:flex;gap:10px;margin-top:20px}
+  .btn{cursor:pointer;border-radius:9px;padding:10px 16px;font-family:var(--display);font-weight:600;font-size:.86rem;border:1px solid var(--line);background:var(--surface-2);color:var(--text);transition:.15s}
+  .btn:hover{border-color:var(--copper)}
+  .btn.primary{background:var(--cyan);color:#08110f;border-color:var(--cyan)}
+  .btn.primary:hover{background:var(--copper-soft);color:#1a0e02}
+  .btn.ghost{background:none}
+  .modal .priv{font-size:.78rem;color:var(--muted-2);margin-top:16px;border-top:1px solid var(--line-soft);padding-top:14px}
+  .close{float:right;cursor:pointer;color:var(--muted);background:none;border:none;font-size:1.3rem;line-height:1;margin:-6px -4px 0 0}
+  .close:hover{color:var(--text)}
+  /* info modal specifics */
+  .spec{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-soft)}
+  .spec:last-of-type{border-bottom:none}
+  .spec .ico{width:34px;height:34px;border-radius:8px;background:var(--bg-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--copper-soft);flex:none}
+  .spec .ico svg{width:17px;height:17px}
+  .spec .lbl{font-family:var(--display);font-weight:600;font-size:.9rem}
+  .spec .val{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+  .spec .tag{margin-left:auto;font-family:var(--mono);font-size:.66rem;padding:2px 8px;border-radius:5px}
+  .tag.ok{color:var(--cyan);border:1px solid var(--cyan-dim)}
+  .tag.warn{color:var(--copper-soft);border:1px solid var(--copper)}
+  .verdict{font-size:.84rem;color:var(--muted);margin-top:16px;background:var(--bg-2);border-radius:9px;padding:12px 14px;border:1px solid var(--line-soft)}
+
+  footer{border-top:1px solid var(--line-soft);padding:22px 0;color:var(--muted-2);font-size:.8rem;text-align:center}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:5px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--copper)}
+  :focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:4px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+  @media (max-width:560px){
+    .step{padding:20px 16px 18px 16px}
+    .step .num{position:static;margin-bottom:10px}
+    .msg{max-width:94%}
+    .bar{flex-wrap:wrap;gap:10px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <div class="brand"><span class="dot"></span>
+      <span>localstack<small>RTX 4050 · on-device coding AI</small></span>
+    </div>
+    <span class="spacer"></span>
+    <button class="iconbtn" id="infoBtn" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg>
+      System
+    </button>
+    <button class="iconbtn cfg" id="cfgBtn" aria-haspopup="dialog">
+      <span class="led"></span> Gemini key
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Free · Local · Private</div>
+    <h1>Your own coding AI,<br>running on <span class="glow">6&nbsp;GB of VRAM</span>.</h1>
+    <p class="lede">A step-by-step build for a fully local AI dev assistant in VS Code — Ollama for inference, Qwen2.5-Coder on your RTX 4050, and a self-indexing "second brain" over your project. No subscription, no code leaving the machine.</p>
+
+    <!-- signature: VRAM budget meter -->
+    <div class="vram" id="vram">
+      <div class="vram-head">
+        <h3>The 6 GB budget</h3>
+        <span class="cap">VRAM in use: <span class="vram-cap" id="vramUsed">5.0 GB</span> / 6 GB</span>
+      </div>
+      <div class="track"><div class="fill" id="fill">
+        <div class="seg weights" id="segW" style="flex-basis:75%">weights</div>
+        <div class="seg kv" id="segK" style="flex-basis:13%">ctx</div>
+        <div class="seg free" id="segF" style="flex-basis:12%">headroom</div>
+      </div></div>
+      <div class="ticks"><span>0</span><span>1.5</span><span>3</span><span>4.5</span><span>6 GB</span></div>
+      <div class="scenarios" role="group" aria-label="VRAM scenarios">
+        <button class="chip-btn" data-w="22" data-k="6" data-used="1.7" data-note="A 3B model (e.g. qwen2.5-coder:3b) sits entirely on the GPU with tons of headroom — fast, always-loaded, no swapping. Best if you want one model for everything.">3B — everything resident</button>
+        <button class="chip-btn" aria-pressed="true" data-w="75" data-k="13" data-used="5.0" data-note="qwen2.5-coder:7b at Q4 with a ~4k context. Most or all layers on the GPU at 25–40 tok/s. The everyday sweet spot — keep context modest so the KV cache doesn't tip you over.">7B Q4 · 4k context</button>
+        <button class="chip-btn" data-w="75" data-k="24" data-used="5.9" data-note="Same 7B but with an 8k context — the KV cache grows and you're near the ceiling. Still works, but expect a few layers to spill to CPU. Drop back to 4k if it slows down.">7B Q4 · 8k context</button>
+      </div>
+      <div class="vram-note" id="vramNote">qwen2.5-coder:7b at Q4 with a ~4k context. Most or all layers on the GPU at 25–40 tok/s. The everyday sweet spot — keep context modest so the KV cache doesn't tip you over.</div>
+    </div>
+  </div>
+
+  <section class="steps">
+    <h2 class="sec-title">Build it, step by step</h2>
+    <p class="sec-sub">Run these in order on Windows. Keep the laptop plugged in the whole time.</p>
+
+    <div class="step">
+      <div class="num">1</div>
+      <h4>Prep the machine &amp; GPU</h4>
+      <p>Plug in and set Windows to <strong>Best Performance</strong> (Settings → System → Power) — laptop GPUs throttle hard on battery and you'll lose most of your speed.</p>
+      <p>Only the <strong>RTX 4050</strong> does the work. The integrated Radeon 740M is ignored — that's expected, not a problem. Update to the current NVIDIA driver (GeForce app or nvidia.com); it ships the CUDA runtime Ollama needs.</p>
+      <div class="hint">Verify the card is alive: open PowerShell and run <b>nvidia-smi</b> — you should see "NVIDIA GeForce RTX 4050".</div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <h4>Install Ollama</h4>
+      <p>Download the Windows installer from <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com</a>. It runs as a background service on <strong>localhost:11434</strong> and every tool below talks to it.</p>
+      <div class="cmd" data-cmd="ollama --version">ollama --version</div>
+      <div class="hint">Open <b>http://localhost:11434</b> in a browser — it should say "Ollama is running".</div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <h4>Pull your models</h4>
+      <p>Three small, code-tuned models. They land on your SSD (a few GB total — you've got 500 GB, no concern).</p>
+      <div class="cmd" data-cmd="ollama pull qwen2.5-coder:7b
+ollama pull qwen2.5-coder:1.5b
+ollama pull nomic-embed-text">ollama pull qwen2.5-coder:7b      <span style="color:var(--muted-2)"># chat / agent workhorse</span>
+ollama pull qwen2.5-coder:1.5b    <span style="color:var(--muted-2)"># fast inline autocomplete</span>
+ollama pull nomic-embed-text      <span style="color:var(--muted-2)"># embeddings for the second brain</span></div>
+      <div class="hint">Want one model for everything instead? Pull <b>qwen2.5-coder:3b</b> — it stays fully resident in 6 GB with no swapping.</div>
+    </div>
+
+    <div class="step">
+      <div class="num">4</div>
+      <h4>Confirm GPU offload</h4>
+      <p>Load the 7B and check it actually landed on the card rather than the CPU.</p>
+      <div class="cmd" data-cmd='ollama run qwen2.5-coder:7b &quot;say hi in one word&quot;
+ollama ps'>ollama run qwen2.5-coder:7b "say hi in one word"
+ollama ps</div>
+      <p>In <strong>ollama ps</strong>, the PROCESSOR column should read <strong>GPU</strong> (or mostly GPU). Watch live VRAM with <strong>nvidia-smi -l 1</strong> in a second window.</p>
+      <div class="hint">If it says CPU, your driver/CUDA is stale — reinstall the NVIDIA driver and restart the Ollama service.</div>
+    </div>
+
+    <div class="step">
+      <div class="num">5</div>
+      <h4>Install VS Code + Continue</h4>
+      <p>Install <a href="https://code.visualstudio.com" target="_blank" rel="noopener">VS Code</a>, then add the <strong>Continue</strong> extension from the Extensions marketplace. It handles autocomplete, chat, edits, and local codebase indexing — all pointed at your Ollama models.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">6</div>
+      <h4>Point Continue at your local models</h4>
+      <p>Open the Continue panel → settings (gear) → edit config. Use this as a starting <strong>config.yaml</strong>, then tweak. (Continue's schema shifts between versions — if a field is rejected, check their docs.)</p>
+      <div class="cmd" data-cmd="name: Local Assistant
+version: 1.0.0
+models:
+  - name: Qwen 7B Chat
+    provider: ollama
+    model: qwen2.5-coder:7b
+    roles: [chat, edit, apply]
+    defaultCompletionOptions:
+      contextLength: 4096
+  - name: Qwen 1.5B Autocomplete
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    roles: [autocomplete]
+  - name: Nomic Embed
+    provider: ollama
+    model: nomic-embed-text
+    roles: [embed]
+context:
+  - provider: codebase
+  - provider: file">name: Local Assistant
+version: 1.0.0
+models:
+  - name: Qwen 7B Chat
+    provider: ollama
+    model: qwen2.5-coder:7b
+    roles: [chat, edit, apply]
+    defaultCompletionOptions:
+      contextLength: 4096
+  - name: Qwen 1.5B Autocomplete
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    roles: [autocomplete]
+  - name: Nomic Embed
+    provider: ollama
+    model: nomic-embed-text
+    roles: [embed]
+context:
+  - provider: codebase
+  - provider: file</div>
+      <div class="hint">The <b>contextLength: 4096</b> line is your VRAM safety valve — it keeps the KV cache small enough to stay on the GPU.</div>
+    </div>
+
+    <div class="step">
+      <div class="num">7</div>
+      <h4>Build the "second brain"</h4>
+      <p>With the embed model set, Continue indexes your project locally and answers questions with retrieved chunks — so you spend far fewer tokens than pasting whole files. In the chat box, type <strong>@codebase</strong> then your question.</p>
+      <div class="cmd" data-cmd="@codebase where is the auth middleware defined and how is it wired in?">@codebase where is the auth middleware defined and how is it wired?</div>
+      <div class="hint"><b>Never index secrets.</b> Add <b>.env</b>, keys and token files to <b>.continueignore</b> so they can't be retrieved into a prompt. Want to own the store yourself? Swap in Chroma or LanceDB behind a small MCP <b>retrieve_context</b> tool.</div>
+    </div>
+
+    <div class="step">
+      <div class="num">8</div>
+      <h4>Agentic editing<span class="opt">optional</span></h4>
+      <p>Want the Claude-Code-style "do this whole task" loop? Install <strong>Cline</strong>, set the provider to Ollama and the model to qwen2.5-coder:7b. It scaffolds across files and runs your tests — just expect it to be slower and more error-prone than a cloud model, since a local 7B is doing the reasoning.</p>
+    </div>
+
+    <div class="step">
+      <div class="num">9</div>
+      <h4>Tune for 6 GB</h4>
+      <p>Run <strong>one</strong> 7B at a time. Keep context at <strong>4k–8k</strong>. Stay plugged in. If chat crawls, drop context or fall back to the 3B. Your 16 GB system RAM holds the OS plus any CPU-offloaded layers, so close heavy apps (Android Studio especially) while a model is loaded.</p>
+    </div>
+  </section>
+
+  <section class="ask" id="ask">
+    <h2 class="sec-title">Off the map?</h2>
+    <p class="sec-sub">The steps cover the build. For the "but what about my specific…" questions, ask Gemini below.</p>
+
+    <div class="chat">
+      <div class="chat-head">
+        <span class="g"></span>
+        <h4>Ask Gemini</h4>
+        <span class="st" id="chatModel">gemini-2.5-flash</span>
+      </div>
+      <div class="log" id="log">
+        <div class="empty" id="empty">Anything the nine steps don't answer — driver quirks, model picks, RAG tuning, error messages.
+          <span id="emptyHint">Add your Gemini key to start →</span>
+        </div>
+      </div>
+      <div class="nokey" id="nokey" style="display:none">No key set yet. <button id="nokeyBtn">Add your Gemini key</button> to enable chat.</div>
+      <div class="compose">
+        <textarea id="input" rows="1" placeholder="Ask a deeper question…" aria-label="Message to Gemini"></textarea>
+        <button class="send" id="send">Send</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">Built for a Windows · RTX 4050 (6 GB) · 16 GB RAM · 500 GB SSD machine. Everything except the Gemini chat runs offline.</footer>
+
+<!-- CONFIG MODAL -->
+<div class="scrim" id="cfgScrim" role="dialog" aria-modal="true" aria-labelledby="cfgTitle">
+  <div class="modal">
+    <button class="close" data-close>&times;</button>
+    <h3 id="cfgTitle">Gemini connection</h3>
+    <p class="sub">Used only by the chat panel. The local setup above needs none of this.</p>
+    <label for="keyIn">API key</label>
+    <input id="keyIn" type="password" placeholder="paste key…" autocomplete="off" spellcheck="false" />
+    <label for="modelIn">Model</label>
+    <input id="modelIn" type="text" placeholder="gemini-2.5-flash" spellcheck="false" />
+    <div class="row">
+      <button class="btn primary" id="saveCfg">Save</button>
+      <button class="btn ghost" id="clearCfg">Clear</button>
+      <button class="btn ghost" data-close style="margin-left:auto">Close</button>
+    </div>
+    <p class="priv">Your key is stored only in this browser (local storage on this device) and is sent straight to Google's API — never to any other server. For work use, get a key provisioned through your organization rather than a personal account.</p>
+  </div>
+</div>
+
+<!-- INFO MODAL -->
+<div class="scrim" id="infoScrim" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+  <div class="modal">
+    <button class="close" data-close>&times;</button>
+    <h3 id="infoTitle">Target system</h3>
+    <p class="sub">Every recommendation here is sized for this exact machine.</p>
+
+    <div class="spec">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></span>
+      <span><span class="lbl">RTX 4050</span><br><span class="val">6 GB VRAM · Ada gen</span></span>
+      <span class="tag ok">drives inference</span>
+    </div>
+    <div class="spec">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7V5M12 7V5M17 7V5M7 21v-2M12 21v-2M17 21v-2"/></svg></span>
+      <span><span class="lbl">16 GB RAM</span><br><span class="val">OS + CPU-offloaded layers</span></span>
+      <span class="tag warn">keep it free</span>
+    </div>
+    <div class="spec">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="12" r="1.5"/><path d="M13 11h5M13 14h5"/></svg></span>
+      <span><span class="lbl">500 GB SSD</span><br><span class="val">models ~3–6 GB total</span></span>
+      <span class="tag ok">plenty of room</span>
+    </div>
+    <div class="spec">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span>
+      <span><span class="lbl">Windows</span><br><span class="val">Ollama + CUDA runtime</span></span>
+      <span class="tag ok">supported</span>
+    </div>
+
+    <div class="verdict"><strong style="color:var(--text)">What it runs well:</strong> 3B models fully on-GPU (instant), 7B at Q4 with 4k–8k context (25–40 tok/s). 14B and larger spill to CPU and slow down — out of scope here.</div>
+    <div class="row"><button class="btn primary" data-close style="margin-left:auto">Got it</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- safe storage (works on GitHub Pages; degrades gracefully elsewhere) ----
+  var mem = {};
+  var store = {
+    get:function(k){ try{ return localStorage.getItem(k); }catch(e){ return (k in mem)?mem[k]:null; } },
+    set:function(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } },
+    del:function(k){ try{ localStorage.removeItem(k); }catch(e){ delete mem[k]; } }
+  };
+  var KEY="gemini_api_key", MODEL="gemini_model", DEFAULT_MODEL="gemini-2.5-flash";
+
+  var $=function(id){return document.getElementById(id);};
+
+  // ---- copy buttons ----
+  document.querySelectorAll('.cmd').forEach(function(box){
+    var btn=document.createElement('button');
+    btn.className='copy'; btn.type='button'; btn.setAttribute('aria-label','Copy command');
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+    box.appendChild(btn);
+    btn.addEventListener('click',function(){
+      var text=box.getAttribute('data-cmd')||box.textContent;
+      var done=function(){ box.classList.add('copied'); setTimeout(function(){box.classList.remove('copied');},1100); };
+      try{ navigator.clipboard.writeText(text).then(done,fallback); }catch(e){ fallback(); }
+      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); done(); }
+    });
+  });
+
+  // ---- VRAM meter ----
+  var chips=document.querySelectorAll('.chip-btn');
+  chips.forEach(function(c){
+    c.addEventListener('click',function(){
+      chips.forEach(function(x){x.setAttribute('aria-pressed','false');});
+      c.setAttribute('aria-pressed','true');
+      var w=+c.dataset.w, k=+c.dataset.k, free=Math.max(0,100-w-k);
+      $('segW').style.flexBasis=w+'%';
+      $('segK').style.flexBasis=k+'%';
+      $('segF').style.flexBasis=free+'%';
+      $('vramUsed').textContent=c.dataset.used+' GB';
+      $('vramNote').textContent=c.dataset.note;
+    });
+  });
+
+  // ---- modals ----
+  function openM(el){ el.classList.add('open'); var f=el.querySelector('input,button'); if(f)f.focus(); }
+  function closeM(el){ el.classList.remove('open'); }
+  $('infoBtn').addEventListener('click',function(){openM($('infoScrim'));});
+  $('cfgBtn').addEventListener('click',openCfg);
+  function openCfg(){ $('keyIn').value=store.get(KEY)||''; $('modelIn').value=store.get(MODEL)||DEFAULT_MODEL; openM($('cfgScrim')); }
+  document.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){ closeM(b.closest('.scrim')); }); });
+  document.querySelectorAll('.scrim').forEach(function(s){ s.addEventListener('click',function(e){ if(e.target===s) closeM(s); }); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.scrim.open').forEach(closeM); });
+
+  $('saveCfg').addEventListener('click',function(){
+    var k=$('keyIn').value.trim(), m=$('modelIn').value.trim()||DEFAULT_MODEL;
+    if(k) store.set(KEY,k); else store.del(KEY);
+    store.set(MODEL,m);
+    closeM($('cfgScrim')); refreshKeyState();
+  });
+  $('clearCfg').addEventListener('click',function(){ store.del(KEY); $('keyIn').value=''; refreshKeyState(); });
+
+  function refreshKeyState(){
+    var has=!!store.get(KEY);
+    var m=store.get(MODEL)||DEFAULT_MODEL;
+    $('cfgBtn').classList.toggle('set',has);
+    $('chatModel').textContent=m;
+    $('nokey').style.display=has?'none':'block';
+    $('send').disabled=!has;
+    $('emptyHint').textContent=has?'Type a question below ↓':'Add your Gemini key to start →';
+  }
+  $('nokeyBtn').addEventListener('click',openCfg);
+
+  // ---- chat ----
+  var log=$('log'), input=$('input'), send=$('send');
+  var history=[]; // {role:'user'|'model', parts:[{text}]}
+  var SYSTEM="You are a setup assistant embedded in a guide for building a FREE, fully LOCAL AI coding assistant on a Windows laptop with an NVIDIA RTX 4050 (6 GB VRAM), 16 GB RAM, and a 500 GB SSD. The user is installing Ollama, pulling qwen2.5-coder models (7b chat, 1.5b autocomplete) plus nomic-embed-text, and configuring the Continue extension in VS Code with local codebase RAG. Answer their deeper questions concisely and practically. Assume Windows commands (PowerShell). Always keep the 6 GB VRAM ceiling in mind and warn when something won't fit. Prefer free/local solutions; only mention paid/cloud options if local genuinely can't do it.";
+
+  input.addEventListener('input',function(){ input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,120)+'px'; });
+  input.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); doSend(); } });
+  send.addEventListener('click',doSend);
+
+  function esc(s){ return s.replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+  function render(md){ // minimal + safe markdown
+    var blocks=[], i=0;
+    md=md.replace(/```([\s\S]*?)```/g,function(_,code){ blocks.push('<pre><code>'+esc(code.replace(/^\n/,''))+'</code></pre>'); return '\u0000'+(i++)+'\u0000'; });
+    md=esc(md);
+    md=md.replace(/`([^`]+)`/g,function(_,c){return '<code>'+c+'</code>';});
+    md=md.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    md=md.split(/\n{2,}/).map(function(p){return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join('');
+    md=md.replace(/\u0000(\d+)\u0000/g,function(_,n){return blocks[+n];});
+    return md;
+  }
+
+  function addMsg(who,cls,html){
+    var hint=$('empty'); if(hint) hint.remove();
+    var m=document.createElement('div'); m.className='msg '+cls;
+    m.innerHTML='<div class="who">'+who+'</div><div class="bubble">'+html+'</div>';
+    log.appendChild(m); log.scrollTop=log.scrollHeight; return m;
+  }
+
+  function doSend(){
+    var text=input.value.trim(); if(!text) return;
+    var key=store.get(KEY); if(!key){ openCfg(); return; }
+    var model=store.get(MODEL)||DEFAULT_MODEL;
+    addMsg('you','me',esc(text).replace(/\n/g,'<br>'));
+    history.push({role:'user',parts:[{text:text}]});
+    input.value=''; input.style.height='auto'; send.disabled=true;
+    var t=addMsg('gemini','','<span class="typing"><i>●</i><i>●</i><i>●</i></span>');
+
+    fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent?key='+encodeURIComponent(key),{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ systemInstruction:{parts:[{text:SYSTEM}]}, contents:history,
+        generationConfig:{temperature:0.6, maxOutputTokens:1400} })
+    }).then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+    .then(function(res){
+      var d=res.d;
+      if(!res.ok){
+        var msg=(d&&d.error&&d.error.message)?d.error.message:'Request failed.';
+        t.querySelector('.bubble').innerHTML='<span style="color:var(--danger)">'+esc(msg)+'</span>';
+        history.pop(); return;
+      }
+      var cand=d.candidates&&d.candidates[0];
+      var out=cand&&cand.content&&cand.content.parts?cand.content.parts.map(function(p){return p.text||'';}).join(''):'';
+      if(!out){ out='(No text returned'+(cand&&cand.finishReason?' — '+cand.finishReason:'')+'.)'; }
+      t.querySelector('.bubble').innerHTML=render(out);
+      history.push({role:'model',parts:[{text:out}]});
+      log.scrollTop=log.scrollHeight;
+    }).catch(function(err){
+      t.querySelector('.bubble').innerHTML='<span style="color:var(--danger)">Network error: '+esc(String(err.message||err))+'</span>';
+      history.pop();
+    }).finally(function(){ send.disabled=!store.get(KEY); input.focus(); });
+  }
+
+  refreshKeyState();
+})();
+</script>
+</body>
+</html>
