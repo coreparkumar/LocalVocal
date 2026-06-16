@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Local AI Coding Stack — RTX 4050 Setup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Local AI Stack & Vibe Coding Playbook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -38,7 +38,8 @@
     color:var(--text);font-family:var(--body);line-height:1.6;
     -webkit-font-smoothing:antialiased;
   }
-  a{color:var(--cyan)}
+  a{color:var(--cyan);text-decoration:none;transition:color .15s}
+  a:hover{color:var(--copper-soft)}
   .wrap{max-width:920px;margin:0 auto;padding:0 22px}
 
   /* header */
@@ -66,7 +67,7 @@
   .led{width:7px;height:7px;border-radius:50%;background:var(--muted-2)}
 
   /* hero */
-  .hero{padding:46px 0 22px}
+  .hero{padding:46px 0 10px}
   .eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--copper)}
   h1{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.08;margin:.5rem 0 .4rem;letter-spacing:-.5px}
   h1 .glow{color:var(--cyan)}
@@ -91,23 +92,68 @@
   .chip-btn[aria-pressed="true"]{background:rgba(84,214,196,.12);border-color:var(--cyan);color:var(--cyan)}
   .vram-note{margin-top:12px;font-size:.84rem;color:var(--muted);min-height:1.4em}
 
-  /* steps */
-  section.steps{padding:26px 0 8px}
+  /* Tabs System */
+  .tabs-nav{
+    display:flex;gap:6px;
+    background:var(--bg-2);padding:5px;
+    border-radius:12px;border:1px solid var(--line-soft);
+    margin:32px 0 18px;
+  }
+  .tab-btn{
+    flex:1;background:transparent;border:none;
+    color:var(--muted);font-family:var(--display);
+    font-weight:600;font-size:.92rem;padding:11px 16px;
+    border-radius:8px;cursor:pointer;transition:all .2s ease;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .tab-btn:hover{
+    color:var(--text);background:rgba(255,255,255,0.03);
+  }
+  .tab-btn.active{
+    color:var(--cyan);background:var(--surface);
+    box-shadow:0 4px 10px rgba(0,0,0,0.18);
+    border:1px solid var(--line);
+  }
+  .tab-btn svg{width:16px;height:16px;}
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+
+  /* steps layout */
+  section.steps{padding:10px 0 8px}
   .sec-title{font-family:var(--display);font-weight:600;font-size:1.4rem;margin:18px 0 6px;letter-spacing:-.2px}
   .sec-sub{color:var(--muted);margin:0 0 22px;font-size:.95rem}
   .step{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 20px 64px;margin-bottom:16px}
   .step .num{position:absolute;left:18px;top:20px;width:32px;height:32px;border-radius:9px;background:var(--bg-2);border:1px solid var(--copper);color:var(--copper-soft);font-family:var(--mono);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:.92rem}
+  
+  /* alternative indicator for alternative tabs */
+  .step.vibe-step .num{border-color:var(--cyan);color:var(--cyan);}
+  
   .step h4{font-family:var(--display);font-weight:600;font-size:1.08rem;margin:.1rem 0 .5rem}
   .step p{margin:.4rem 0;color:var(--muted);font-size:.93rem}
   .step p strong{color:var(--text);font-weight:600}
   .step .opt{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--cyan-dim);border-radius:5px;padding:1px 7px;margin-left:8px;vertical-align:middle}
+  
   .cmd{position:relative;margin:11px 0;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:9px;padding:12px 46px 12px 14px;font-family:var(--mono);font-size:.82rem;color:#cfe6e2;overflow-x:auto;white-space:pre}
   .cmd .copy{position:absolute;top:8px;right:8px;cursor:pointer;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;transition:.15s}
   .cmd .copy:hover{color:var(--cyan);border-color:var(--cyan-dim)}
   .cmd .copy svg{width:14px;height:14px}
   .cmd.copied .copy{color:var(--cyan);border-color:var(--cyan)}
   .hint{font-size:.82rem;color:var(--muted-2);border-left:2px solid var(--copper);padding:2px 0 2px 11px;margin:10px 0 2px}
+  .hint.vibe-hint{border-left-color:var(--cyan);}
   .hint b{color:var(--copper-soft);font-weight:600}
+
+  .cover-photo {
+    width: 100%;
+    max-height: 380px;
+    object-fit: contain;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    margin: 0 0 32px 0;
+    background: #ffffff; /* Matches flowchart light theme perfectly */
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    display: block;
+  }
 
   /* gemini chat */
   section.ask{padding:30px 0 70px}
@@ -192,7 +238,7 @@
 <header>
   <div class="wrap bar">
     <div class="brand"><span class="dot"></span>
-      <span>localstack<small>RTX 4050 · on-device coding AI</small></span>
+      <span>localstack<small>GPU Dedicated · on-device coding AI</small></span>
     </div>
     <span class="spacer"></span>
     <button class="iconbtn" id="infoBtn" aria-haspopup="dialog">
@@ -209,84 +255,98 @@
 
   <div class="hero">
     <div class="eyebrow">Free · Local · Private</div>
-    <h1>Your own coding AI,<br>running on <span class="glow">6&nbsp;GB of VRAM</span>.</h1>
-    <p class="lede">A step-by-step build for a fully local AI dev assistant in VS Code — Ollama for inference, Qwen2.5-Coder on your RTX 4050, and a self-indexing "second brain" over your project. No subscription, no code leaving the machine.</p>
+    <h1>Your own coding AI,<br>running on <span class="glow">your local GPU</span>.</h1>
+    <p class="lede">A step-by-step build for a fully local AI dev assistant in VS Code — Ollama for inference, Qwen2.5-Coder on your GPU, and a self-indexing "second brain" over your project. No subscription, no code leaving the machine.</p>
 
     <!-- signature: VRAM budget meter -->
     <div class="vram" id="vram">
       <div class="vram-head">
-        <h3>The 6 GB budget</h3>
-        <span class="cap">VRAM in use: <span class="vram-cap" id="vramUsed">5.0 GB</span> / 6 GB</span>
+        <h3>The VRAM budget</h3>
+        <span class="cap">VRAM load: <span class="vram-cap" id="vramUsed">Optimal</span></span>
       </div>
       <div class="track"><div class="fill" id="fill">
-        <div class="seg weights" id="segW" style="flex-basis:75%">weights</div>
-        <div class="seg kv" id="segK" style="flex-basis:13%">ctx</div>
-        <div class="seg free" id="segF" style="flex-basis:12%">headroom</div>
+        <div class="seg weights" id="segW" style="flex-basis:70%">weights</div>
+        <div class="seg kv" id="segK" style="flex-basis:15%">ctx</div>
+        <div class="seg free" id="segF" style="flex-basis:15%">headroom</div>
       </div></div>
-      <div class="ticks"><span>0</span><span>1.5</span><span>3</span><span>4.5</span><span>6 GB</span></div>
+      <div class="ticks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100% VRAM</span></div>
       <div class="scenarios" role="group" aria-label="VRAM scenarios">
-        <button class="chip-btn" data-w="22" data-k="6" data-used="1.7" data-note="A 3B model (e.g. qwen2.5-coder:3b) sits entirely on the GPU with tons of headroom — fast, always-loaded, no swapping. Best if you want one model for everything.">3B — everything resident</button>
-        <button class="chip-btn" aria-pressed="true" data-w="75" data-k="13" data-used="5.0" data-note="qwen2.5-coder:7b at Q4 with a ~4k context. Most or all layers on the GPU at 25–40 tok/s. The everyday sweet spot — keep context modest so the KV cache doesn't tip you over.">7B Q4 · 4k context</button>
-        <button class="chip-btn" data-w="75" data-k="24" data-used="5.9" data-note="Same 7B but with an 8k context — the KV cache grows and you're near the ceiling. Still works, but expect a few layers to spill to CPU. Drop back to 4k if it slows down.">7B Q4 · 8k context</button>
+        <button class="chip-btn" data-w="30" data-k="10" data-used="Light" data-note="A 3B model (e.g. qwen2.5-coder:3b) sits entirely on the GPU with tons of headroom — fast, always-loaded, no swapping. Best if you want one model for everything.">3B — high headroom</button>
+        <button class="chip-btn" aria-pressed="true" data-w="70" data-k="15" data-used="Optimal" data-note="qwen2.5-coder:7b at Q4 with a ~4k context. Most or all layers on the GPU at 25–40 tok/s. The everyday sweet spot — keep context modest so the KV cache doesn't tip you over.">7B Q4 · 4k context</button>
+        <button class="chip-btn" data-w="75" data-k="20" data-used="Heavy" data-note="Same 7B but with an 8k context — the KV cache grows and you're near the ceiling. Still works, but expect a few layers to spill to CPU if VRAM limits are exceeded.">7B Q4 · 8k context</button>
       </div>
       <div class="vram-note" id="vramNote">qwen2.5-coder:7b at Q4 with a ~4k context. Most or all layers on the GPU at 25–40 tok/s. The everyday sweet spot — keep context modest so the KV cache doesn't tip you over.</div>
     </div>
   </div>
 
-  <section class="steps">
-    <h2 class="sec-title">Build it, step by step</h2>
-    <p class="sec-sub">Run these in order on Windows. Keep the laptop plugged in the whole time.</p>
+  <!-- Interactive Tab Switcher -->
+  <div class="tabs-nav" role="tablist">
+    <button class="tab-btn active" id="tabBtnSetup" role="tab" aria-selected="true" aria-controls="tabSetup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+      Local Stack Build
+    </button>
+    <button class="tab-btn" id="tabBtnVibe" role="tab" aria-selected="false" aria-controls="tabVibe">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      Vibe Coding Playbook
+    </button>
+  </div>
 
-    <div class="step">
-      <div class="num">1</div>
-      <h4>Prep the machine &amp; GPU</h4>
-      <p>Plug in and set Windows to <strong>Best Performance</strong> (Settings → System → Power) — laptop GPUs throttle hard on battery and you'll lose most of your speed.</p>
-      <p>Only the <strong>RTX 4050</strong> does the work. The integrated Radeon 740M is ignored — that's expected, not a problem. Update to the current NVIDIA driver (GeForce app or nvidia.com); it ships the CUDA runtime Ollama needs.</p>
-      <div class="hint">Verify the card is alive: open PowerShell and run <b>nvidia-smi</b> — you should see "NVIDIA GeForce RTX 4050".</div>
-    </div>
+  <!-- TAB 1: LOCAL SETUP STACK -->
+  <div class="tab-content active" id="tabSetup">
+    <section class="steps">
+      <h2 class="sec-title">Build it, step by step</h2>
+      <p class="sec-sub">Run these in order on Windows. Keep the laptop plugged in the whole time.</p>
 
-    <div class="step">
-      <div class="num">2</div>
-      <h4>Install Ollama</h4>
-      <p>Download the Windows installer from <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com</a>. It runs as a background service on <strong>localhost:11434</strong> and every tool below talks to it.</p>
-      <div class="cmd" data-cmd="ollama --version">ollama --version</div>
-      <div class="hint">Open <b>http://localhost:11434</b> in a browser — it should say "Ollama is running".</div>
-    </div>
+      <div class="step">
+        <div class="num">1</div>
+        <h4>Attempt to configure a system with GPU</h4>
+        <p>Plug in and set Windows to <strong>Best Performance</strong> (Settings → System → Power) — laptop GPUs throttle hard on battery and you'll lose most of your speed.</p>
+        <p>Make sure your <strong>dedicated GPU</strong> handles the compute work. The integrated graphics processor (like onboard Radeon or Intel graphics) should be bypassed for heavy loading. Update to the current drivers (NVIDIA CUDA or AMD ROCm runtimes) so Ollama has full acceleration.</p>
+        <div class="hint">Verify the card is alive: open PowerShell and run <b>nvidia-smi</b> (or the equivalent CLI monitoring utility for your hardware) — you should see your dedicated GPU active.</div>
+      </div>
 
-    <div class="step">
-      <div class="num">3</div>
-      <h4>Pull your models</h4>
-      <p>Three small, code-tuned models. They land on your SSD (a few GB total — you've got 500 GB, no concern).</p>
-      <div class="cmd" data-cmd="ollama pull qwen2.5-coder:7b
+      <div class="step">
+        <div class="num">2</div>
+        <h4>Install Ollama</h4>
+        <p>Download the Windows installer from <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com</a>. It runs as a background service on <strong>localhost:11434</strong> and every tool below talks to it.</p>
+        <div class="cmd" data-cmd="ollama --version">ollama --version</div>
+        <div class="hint">Open <b>http://localhost:11434</b> in a browser — it should say "Ollama is running".</div>
+      </div>
+
+      <div class="step">
+        <div class="num">3</div>
+        <h4>Pull your models</h4>
+        <p>Three small, code-tuned models. They land on your SSD (a few GB total — you've got 500 GB, no concern).</p>
+        <div class="cmd" data-cmd="ollama pull qwen2.5-coder:7b
 ollama pull qwen2.5-coder:1.5b
 ollama pull nomic-embed-text">ollama pull qwen2.5-coder:7b      <span style="color:var(--muted-2)"># chat / agent workhorse</span>
 ollama pull qwen2.5-coder:1.5b    <span style="color:var(--muted-2)"># fast inline autocomplete</span>
 ollama pull nomic-embed-text      <span style="color:var(--muted-2)"># embeddings for the second brain</span></div>
-      <div class="hint">Want one model for everything instead? Pull <b>qwen2.5-coder:3b</b> — it stays fully resident in 6 GB with no swapping.</div>
-    </div>
+        <div class="hint">Want one model for everything instead? Pull <b>qwen2.5-coder:3b</b> — it stays fully resident on modest hardware profiles with no virtual memory swapping.</div>
+      </div>
 
-    <div class="step">
-      <div class="num">4</div>
-      <h4>Confirm GPU offload</h4>
-      <p>Load the 7B and check it actually landed on the card rather than the CPU.</p>
-      <div class="cmd" data-cmd='ollama run qwen2.5-coder:7b &quot;say hi in one word&quot;
+      <div class="step">
+        <div class="num">4</div>
+        <h4>Confirm GPU offload</h4>
+        <p>Load the 7B and check it actually landed on the card rather than the CPU.</p>
+        <div class="cmd" data-cmd='ollama run qwen2.5-coder:7b &quot;say hi in one word&quot;
 ollama ps'>ollama run qwen2.5-coder:7b "say hi in one word"
 ollama ps</div>
-      <p>In <strong>ollama ps</strong>, the PROCESSOR column should read <strong>GPU</strong> (or mostly GPU). Watch live VRAM with <strong>nvidia-smi -l 1</strong> in a second window.</p>
-      <div class="hint">If it says CPU, your driver/CUDA is stale — reinstall the NVIDIA driver and restart the Ollama service.</div>
-    </div>
+        <p>In <strong>ollama ps</strong>, the PROCESSOR column should read <strong>GPU</strong> (or mostly GPU). Watch live VRAM with <strong>nvidia-smi -l 1</strong> in a second window.</p>
+        <div class="hint">If it says CPU, your driver/runtimes are stale — reinstall your graphics driver and restart the Ollama service.</div>
+      </div>
 
-    <div class="step">
-      <div class="num">5</div>
-      <h4>Install VS Code + Continue</h4>
-      <p>Install <a href="https://code.visualstudio.com" target="_blank" rel="noopener">VS Code</a>, then add the <strong>Continue</strong> extension from the Extensions marketplace. It handles autocomplete, chat, edits, and local codebase indexing — all pointed at your Ollama models.</p>
-    </div>
+      <div class="step">
+        <div class="num">5</div>
+        <h4>Install VS Code + Continue</h4>
+        <p>Install <a href="https://code.visualstudio.com" target="_blank" rel="noopener">VS Code</a>, then add the <strong>Continue</strong> extension from the Extensions marketplace. It handles autocomplete, chat, edits, and local codebase indexing — all pointed at your Ollama models.</p>
+      </div>
 
-    <div class="step">
-      <div class="num">6</div>
-      <h4>Point Continue at your local models</h4>
-      <p>Open the Continue panel → settings (gear) → edit config. Use this as a starting <strong>config.yaml</strong>, then tweak. (Continue's schema shifts between versions — if a field is rejected, check their docs.)</p>
-      <div class="cmd" data-cmd="name: Local Assistant
+      <div class="step">
+        <div class="num">6</div>
+        <h4>Point Continue at your local models</h4>
+        <p>Open the Continue panel → settings (gear) → edit config. Use this as a starting <strong>config.yaml</strong>, then tweak. (Continue's schema shifts between versions — if a field is rejected, check their docs.)</p>
+        <div class="cmd" data-cmd="name: Local Assistant
 version: 1.0.0
 models:
   - name: Qwen 7B Chat
@@ -325,30 +385,103 @@ models:
 context:
   - provider: codebase
   - provider: file</div>
-      <div class="hint">The <b>contextLength: 4096</b> line is your VRAM safety valve — it keeps the KV cache small enough to stay on the GPU.</div>
-    </div>
+        <div class="hint">The <b>contextLength: 4096</b> line is your VRAM safety valve — it keeps the KV cache small enough to stay on the GPU.</div>
+      </div>
 
-    <div class="step">
-      <div class="num">7</div>
-      <h4>Build the "second brain"</h4>
-      <p>With the embed model set, Continue indexes your project locally and answers questions with retrieved chunks — so you spend far fewer tokens than pasting whole files. In the chat box, type <strong>@codebase</strong> then your question.</p>
-      <div class="cmd" data-cmd="@codebase where is the auth middleware defined and how is it wired in?">@codebase where is the auth middleware defined and how is it wired?</div>
-      <div class="hint"><b>Never index secrets.</b> Add <b>.env</b>, keys and token files to <b>.continueignore</b> so they can't be retrieved into a prompt. Want to own the store yourself? Swap in Chroma or LanceDB behind a small MCP <b>retrieve_context</b> tool.</div>
-    </div>
+      <div class="step">
+        <div class="num">7</div>
+        <h4>Build the "second brain"</h4>
+        <p>With the embed model set, Continue indexes your project locally and answers questions with retrieved chunks — so you spend far fewer tokens than pasting whole files. In the chat box, type <strong>@codebase</strong> then your question.</p>
+        <div class="cmd" data-cmd="@codebase where is the auth middleware defined and how is it wired in?">@codebase where is the auth middleware defined and how is it wired?</div>
+        <div class="hint"><b>Never index secrets.</b> Add <b>.env</b>, keys and token files to <b>.continueignore</b> so they can't be retrieved into a prompt. Want to own the store yourself? Swap in Chroma or LanceDB behind a small MCP <b>retrieve_context</b> tool.</div>
+      </div>
 
-    <div class="step">
-      <div class="num">8</div>
-      <h4>Agentic editing<span class="opt">optional</span></h4>
-      <p>Want the Claude-Code-style "do this whole task" loop? Install <strong>Cline</strong>, set the provider to Ollama and the model to qwen2.5-coder:7b. It scaffolds across files and runs your tests — just expect it to be slower and more error-prone than a cloud model, since a local 7B is doing the reasoning.</p>
-    </div>
+      <div class="step">
+        <div class="num">8</div>
+        <h4>Agentic editing<span class="opt">optional</span></h4>
+        <p>Want the Claude-Code-style "do this whole task" loop? Install <strong>Cline</strong>, set the provider to Ollama and the model to qwen2.5-coder:7b. It scaffolds across files and runs your tests — just expect it to be slower and more error-prone than a cloud model, since a local 7B is doing the reasoning.</p>
+      </div>
 
-    <div class="step">
-      <div class="num">9</div>
-      <h4>Tune for 6 GB</h4>
-      <p>Run <strong>one</strong> 7B at a time. Keep context at <strong>4k–8k</strong>. Stay plugged in. If chat crawls, drop context or fall back to the 3B. Your 16 GB system RAM holds the OS plus any CPU-offloaded layers, so close heavy apps (Android Studio especially) while a model is loaded.</p>
-    </div>
-  </section>
+      <div class="step">
+        <div class="num">9</div>
+        <h4>Tune for your GPU</h4>
+        <p>Run <strong>one</strong> 7B at a time. Keep context at <strong>4k–8k</strong>. Stay plugged in. If chat crawls, drop context or fall back to the 3B. Your system RAM holds the OS plus any CPU-offloaded layers, so close heavy apps (Android Studio especially) while a model is loaded.</p>
+      </div>
+    </section>
+  </div>
 
+  <!-- TAB 2: VIBE CODING PLAYBOOK -->
+  <div class="tab-content" id="tabVibe">
+    <section class="steps">
+      <h2 class="sec-title">The Vibe Coding Playbook</h2>
+      <p class="sec-sub">My custom 7-step execution workflow to build products fast by orchestrating AI without getting bogged down in syntax.</p>
+
+      <img src="workflow_of_prompts.png" alt="Vibe Coding Playbook Workflow Flowchart" class="cover-photo" onerror="this.onerror=null; this.src='https://placehold.co/900x400/16212b/e7e4dc?text=Vibe+Coding+Playbook+Workflow'">
+
+      <div class="step vibe-step">
+        <div class="num">1</div>
+        <h4>Brainstorm with AI on your raw idea</h4>
+        <p>Treat the AI model as your product manager. Dive deep into the product concept to validate architecture, catch structural loopholes, and define MVP requirements before writing a single line of code.</p>
+        <div class="cmd" data-cmd="I have an idea for a local-first voice memo system named LocalVocal. It needs to run completely offline on a low-end GPU, transcribe voice to text, and let me search transcripts. Play devil's advocate: what are the primary architectural bottlenecks, which local model configurations make sense, and what boundaries should define our MVP?">I have an idea for a local-first voice memo system named LocalVocal. It needs to run completely offline on a low-end GPU, transcribe voice to text, and let me search transcripts. Play devil's advocate: what are the primary architectural bottlenecks, which local model configurations make sense, and what boundaries should define our MVP?</div>
+        <div class="hint vibe-hint"><b>Tip:</b> Force the AI to ask you 5 clarifying questions about data safety and UI complexity before it starts listing answers.</div>
+      </div>
+
+      <div class="step vibe-step">
+        <div class="num">2</div>
+        <h4>Create Project Structure &amp; PRD</h4>
+        <p>Consolidate your finalized brainstorm into formal blueprints. Instruct the AI to generate a Markdown file outlining directory systems, functional tasks, and strict local requirements.</p>
+        <div class="cmd" data-cmd="Based on our brainstorming session, generate a comprehensive PRD.md file and a strict visual directory tree layout for our project. Include a listing of dependencies, functional specifications, and non-functional requirements (such as 100% offline data privacy).">Based on our brainstorming session, generate a comprehensive PRD.md file and a strict visual directory tree layout for our project. Include a listing of dependencies, functional specifications, and non-functional requirements (such as 100% offline data privacy).</div>
+        <div class="hint vibe-hint"><b>Tip:</b> Save the output directly into a file called <b>PRD.md</b> in the root directory of your workspace.</div>
+      </div>
+
+      <div class="step vibe-step">
+        <div class="num">3</div>
+        <h4>Ask for step-by-step testable prompts</h4>
+        <p>Break the broad PRD down into a sequential, atomic roadmap. Do not allow the AI to build everything at once. Request specific, modular prompts that focus on building one testable component at a time.</p>
+        
+        <div class="cmd" data-cmd="Using our PRD and folder structure, provide a step-by-step roadmap of distinct, sequential prompts. Each step must build exactly one module/script that can be independently run and tested in my terminal before we proceed to the next layer.">Using our PRD and folder structure, provide a step-by-step roadmap of distinct, sequential prompts. Each step must build exactly one module/script that can be independently run and tested in my terminal before we proceed to the next layer.</div>
+        <div class="hint vibe-hint"><b>Rule:</b> If a step is too large, force the AI to break it down further until each step has its own explicit verification procedure.</div>
+      </div>
+
+      <div class="step vibe-step">
+        <div class="num">4</div>
+        <h4>Connect VS Code to your Local AI engine</h4>
+        <p>Boot up your coding workspace and wire up your local intelligence. Link an IDE environment (like <strong>Continue</strong> or <strong>Roo Code</strong>) directly to Ollama or your local compatible model API endpoint.</p>
+        <p><strong>Cloud Sandbox Alternative:</strong> If you prefer to bypass local desktop configurations, you can execute these playbook steps on rapid AI-native development platforms like <strong>Lovable</strong>, <strong>Replit</strong>, or <strong>Vercel (v0)</strong>. These web apps manage setup, compile dependencies, and preview interfaces entirely in-browser.</p>
+        <div class="cmd" data-cmd="# Point Continue config.yaml to your Ollama API
+ollama run qwen2.5-coder:7b"># Point Continue config.yaml to your Ollama API
+ollama run qwen2.5-coder:7b</div>
+        <div class="hint vibe-hint"><b>Localhost Tip:</b> Ensure Ollama is running in the background at <b>http://localhost:11434</b> before connecting the editor tools.</div>
+      </div>
+
+      <div class="step vibe-step">
+        <div class="num">5</div>
+        <h4>Define workspace dependencies and system rules</h4>
+        <p>Protect your workspace from AI hallucinations. Populate your <code>requirements.txt</code> or <code>package.json</code> with locked versions, and configure a custom workspace rules file (e.g., <code>.cursorrules</code>) to declare structural guidelines.</p>
+        <div class="cmd" data-cmd="Generate a .cursorrules system file for this project. Enforce these constraints: 1) Run completely offline, 2) Use standard libraries or python-sounddevice/numpy, 3) Modular structure only, 4) No cloud service imports.">Generate a .cursorrules system file for this project. Enforce these constraints: 1) Run completely offline, 2) Use standard libraries or python-sounddevice/numpy, 3) Modular structure only, 4) No cloud service imports.</div>
+        <div class="hint vibe-hint"><b>Constraint:</b> Declaring strict libraries at the start keeps your generative models focused on code that actually functions on your local machine.</div>
+      </div>
+
+      <div class="step vibe-step">
+        <div class="num">6</div>
+        <h4>Execute prompting roadmap, step-by-step</h4>
+        <p>Feed the AI the incremental prompt roadmap from Step 3, one piece at a time. Run localized verification scripts instantly after the code is generated. <strong>Never</strong> continue to the next module until the current one is tested and working.</p>
+        <div class="cmd" data-cmd="Implement module 1 (Audio capturing engine) as defined in our roadmap. Ensure it records 5 seconds of audio, saves it as a local .wav, handles device selection, and prints real-time peak decibel level monitoring to the CLI.">Implement module 1 (Audio capturing engine) as defined in our roadmap. Ensure it records 5 seconds of audio, saves it as a local .wav, handles device selection, and prints real-time peak decibel level monitoring to the CLI.</div>
+        <div class="hint vibe-hint"><b>Action:</b> Run the module immediately in your terminal: <b>python audio_engine.py</b>. Resolve errors right away before proceeding.</div>
+      </div>
+
+      <div class="step vibe-step">
+        <div class="num">7</div>
+        <h4>Generate and maintain the context file</h4>
+        <p>Avoid context window bloating! After a step tests OK, ask the AI to generate/update an external <code>context_checkpoint.md</code>. This acts as a rolling state machine summary of what's been built, exported APIs, and what needs to be made for the next steps.</p>
+        <p><strong>Feature-Specific Partitioning:</strong> To keep context windows maximally efficient, create and maintain separate context files for each individual feature (e.g., <code>context_auth.md</code>, <code>context_audio_engine.md</code>, <code>context_search_rag.md</code>) instead of keeping everything in a single oversized tracker. Feed the AI only the specific feature checkpoints relevant to your active task.</p>
+        <div class="cmd" data-cmd="The current module is working perfectly. Create/update a 'context_checkpoint.md' summarizing the codebase architecture, exported classes/methods, and the current state of variables. Keep this context brief so I can feed it back to you for the next steps.">The current module is working perfectly. Create/update a 'context_checkpoint.md' summarizing the codebase architecture, exported classes/methods, and the current state of variables. Keep this context brief so I can feed it back to you for the next steps.</div>
+        <div class="hint vibe-hint"><b>Checkpointing Strategy:</b> Instead of sending your entire codebase back into the LLM context for subsequent edits, simply upload the <b>context_checkpoint.md</b> to keep token lookups extremely fast and lightweight.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CHAT WINDOW -->
   <section class="ask" id="ask">
     <h2 class="sec-title">Off the map?</h2>
     <p class="sec-sub">The steps cover the build. For the "but what about my specific…" questions, ask Gemini below.</p>
@@ -360,7 +493,7 @@ context:
         <span class="st" id="chatModel">gemini-2.5-flash</span>
       </div>
       <div class="log" id="log">
-        <div class="empty" id="empty">Anything the nine steps don't answer — driver quirks, model picks, RAG tuning, error messages.
+        <div class="empty" id="empty">Anything the setup steps or Vibe Coding Playbook don't answer — driver quirks, model choices, RAG configs, workflow tuning, or code generation.
           <span id="emptyHint">Add your Gemini key to start →</span>
         </div>
       </div>
@@ -373,7 +506,7 @@ context:
   </section>
 </main>
 
-<footer class="wrap">Built for a Windows · RTX 4050 (6 GB) · 16 GB RAM · 500 GB SSD machine. Everything except the Gemini chat runs offline.</footer>
+<footer class="wrap">Built for Windows machines with dedicated GPUs. Everything except the Gemini chat runs offline.</footer>
 
 <!-- CONFIG MODAL -->
 <div class="scrim" id="cfgScrim" role="dialog" aria-modal="true" aria-labelledby="cfgTitle">
@@ -399,39 +532,40 @@ context:
   <div class="modal">
     <button class="close" data-close>&times;</button>
     <h3 id="infoTitle">Target system</h3>
-    <p class="sub">Every recommendation here is sized for this exact machine.</p>
+    <p class="sub">Every recommendation here is sized for dedicated GPU architectures.</p>
 
     <div class="spec">
       <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></span>
-      <span><span class="lbl">RTX 4050</span><br><span class="val">6 GB VRAM · Ada gen</span></span>
+      <span><span class="lbl">Dedicated GPU</span><br><span class="val">Hardware accelerated acceleration</span></span>
       <span class="tag ok">drives inference</span>
     </div>
     <div class="spec">
       <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7V5M12 7V5M17 7V5M7 21v-2M12 21v-2M17 21v-2"/></svg></span>
-      <span><span class="lbl">16 GB RAM</span><br><span class="val">OS + CPU-offloaded layers</span></span>
+      <span><span class="lbl">System RAM</span><br><span class="val">OS + CPU-offloaded layers</span></span>
       <span class="tag warn">keep it free</span>
     </div>
     <div class="spec">
       <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="12" r="1.5"/><path d="M13 11h5M13 14h5"/></svg></span>
-      <span><span class="lbl">500 GB SSD</span><br><span class="val">models ~3–6 GB total</span></span>
+      <span><span class="lbl">Solid State Drive</span><br><span class="val">models ~3–10 GB total</span></span>
       <span class="tag ok">plenty of room</span>
     </div>
     <div class="spec">
       <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span>
-      <span><span class="lbl">Windows</span><br><span class="val">Ollama + CUDA runtime</span></span>
+      <span><span class="lbl">Operating System</span><br><span class="val">Ollama + GPU acceleration runtimes</span></span>
       <span class="tag ok">supported</span>
     </div>
 
-    <div class="verdict"><strong style="color:var(--text)">What it runs well:</strong> 3B models fully on-GPU (instant), 7B at Q4 with 4k–8k context (25–40 tok/s). 14B and larger spill to CPU and slow down — out of scope here.</div>
+    <div class="verdict"><strong style="color:var(--text)">What it runs well:</strong> 3B models fully on-GPU (instant), 7B at Q4 with 4k–8k context (25–40 tok/s). Larger models or massive contexts may spill to CPU and slow down context ingestion.</div>
     <div class="row"><button class="btn primary" data-close style="margin-left:auto">Got it</button></div>
   </div>
 </div>
 
+<!-- PROCESS LOGIC -->
 <script>
 (function(){
   "use strict";
 
-  // ---- safe storage (works on GitHub Pages; degrades gracefully elsewhere) ----
+  // ---- safe storage ----
   var mem = {};
   var store = {
     get:function(k){ try{ return localStorage.getItem(k); }catch(e){ return (k in mem)?mem[k]:null; } },
@@ -442,19 +576,52 @@ context:
 
   var $=function(id){return document.getElementById(id);};
 
+  // ---- tab switching ----
+  var tabBtnSetup = $('tabBtnSetup');
+  var tabBtnVibe = $('tabBtnVibe');
+  var tabSetup = $('tabSetup');
+  var tabVibe = $('tabVibe');
+
+  function switchTab(target) {
+    if (target === 'vibe') {
+      tabBtnVibe.classList.add('active');
+      tabBtnVibe.setAttribute('aria-selected', 'true');
+      tabBtnSetup.classList.remove('active');
+      tabBtnSetup.setAttribute('aria-selected', 'false');
+      tabVibe.classList.add('active');
+      tabSetup.classList.remove('active');
+    } else {
+      tabBtnSetup.classList.add('active');
+      tabBtnSetup.setAttribute('aria-selected', 'true');
+      tabBtnVibe.classList.remove('active');
+      tabBtnVibe.setAttribute('aria-selected', 'false');
+      tabSetup.classList.add('active');
+      tabVibe.classList.remove('active');
+    }
+  }
+
+  tabBtnSetup.addEventListener('click', function(){ switchTab('setup'); });
+  tabBtnVibe.addEventListener('click', function(){ switchTab('vibe'); });
+
   // ---- copy buttons ----
-  document.querySelectorAll('.cmd').forEach(function(box){
-    var btn=document.createElement('button');
-    btn.className='copy'; btn.type='button'; btn.setAttribute('aria-label','Copy command');
-    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
-    box.appendChild(btn);
-    btn.addEventListener('click',function(){
-      var text=box.getAttribute('data-cmd')||box.textContent;
-      var done=function(){ box.classList.add('copied'); setTimeout(function(){box.classList.remove('copied');},1100); };
-      try{ navigator.clipboard.writeText(text).then(done,fallback); }catch(e){ fallback(); }
-      function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); done(); }
+  function setupCopyButtons() {
+    document.querySelectorAll('.cmd').forEach(function(box){
+      if (box.querySelector('.copy')) return; // Avoid duplicating copy buttons if logic is re-run
+      var btn=document.createElement('button');
+      btn.className='copy'; btn.type='button'; btn.setAttribute('aria-label','Copy command');
+      btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+      box.appendChild(btn);
+      btn.addEventListener('click',function(){
+        var text=box.getAttribute('data-cmd')||box.textContent;
+        // Strip trailing copys or comments from target string if pulled programmatically
+        if (text.endsWith('\n')) text = text.trim();
+        var done=function(){ box.classList.add('copied'); setTimeout(function(){box.classList.remove('copied');},1100); };
+        try{ navigator.clipboard.writeText(text).then(done,fallback); }catch(e){ fallback(); }
+        function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); done(); }
+      });
     });
-  });
+  }
+  setupCopyButtons();
 
   // ---- VRAM meter ----
   var chips=document.querySelectorAll('.chip-btn');
@@ -466,7 +633,7 @@ context:
       $('segW').style.flexBasis=w+'%';
       $('segK').style.flexBasis=k+'%';
       $('segF').style.flexBasis=free+'%';
-      $('vramUsed').textContent=c.dataset.used+' GB';
+      $('vramUsed').textContent=c.dataset.used;
       $('vramNote').textContent=c.dataset.note;
     });
   });
@@ -503,7 +670,7 @@ context:
   // ---- chat ----
   var log=$('log'), input=$('input'), send=$('send');
   var history=[]; // {role:'user'|'model', parts:[{text}]}
-  var SYSTEM="You are a setup assistant embedded in a guide for building a FREE, fully LOCAL AI coding assistant on a Windows laptop with an NVIDIA RTX 4050 (6 GB VRAM), 16 GB RAM, and a 500 GB SSD. The user is installing Ollama, pulling qwen2.5-coder models (7b chat, 1.5b autocomplete) plus nomic-embed-text, and configuring the Continue extension in VS Code with local codebase RAG. Answer their deeper questions concisely and practically. Assume Windows commands (PowerShell). Always keep the 6 GB VRAM ceiling in mind and warn when something won't fit. Prefer free/local solutions; only mention paid/cloud options if local genuinely can't do it.";
+  var SYSTEM = "You are an assistant embedded in a workspace setup guide optimized for local environments with dedicated GPUs running Ollama, Qwen, and custom environments. You have context about: 1) The Local Stack Build (Ollama config, config.yaml, Nomic RAG codebase indexing, VS Code integration, VRAM limit adjustments). 2) The Vibe Coding Playbook, a 7-step workspace orchestration workflow: Step 1: Brainstorming concepts to validate MVP scope. Step 2: Generating full structural blueprints & PRD.md files. Step 3: Getting precise, atomic, testable prompt roadmaps. Step 4: Connecting the local IDE extensions to Ollama/LM studio endpoints or cloud sandboxes (Lovable, Replit, Vercel). Step 5: Pinning dependencies and setting explicit .cursorrules files. Step 6: Step-by-step sequential development execution with strict CLI checks. Step 7: Creating feature-specific context checkpoints to avoid context bloat. Answer questions about local coding tools or this playbook concisely in Markdown. Assume Windows Powershell.";
 
   input.addEventListener('input',function(){ input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,120)+'px'; });
   input.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); doSend(); } });
@@ -566,3 +733,5 @@ context:
 </script>
 </body>
 </html>
+```
+eof
